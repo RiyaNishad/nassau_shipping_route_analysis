@@ -57,15 +57,27 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+from pathlib import Path
+import streamlit as st
+import pandas as pd
+
 @st.cache_data
 def load_data():
-    base_dir = Path(__file__).parent
-    path = base_dir / "Nassau Candy Distributor.csv"
+    candidates = [
+        Path("Nassau Candy Distributor.csv"),
+        Path("Nassau-Candy-Distributor.csv"),
+        Path(__file__).resolve().parent / "Nassau Candy Distributor.csv",
+        Path(__file__).resolve().parent / "Nassau-Candy-Distributor.csv",
+    ]
 
-    if not path.exists():
-        st.error(f"CSV file not found: {path}")
+    path = next((p for p in candidates if p.exists()), None)
+
+    if path is None:
+        st.error("CSV file not found. Check the filename and whether it is committed to the repo.")
         st.stop()
 
+    return pd.read_csv(path)
+    
     df = pd.read_csv(path)
     df.columns = [c.strip() for c in df.columns]
 
