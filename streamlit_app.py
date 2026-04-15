@@ -60,7 +60,7 @@ st.markdown("""
 @st.cache_data
 def load_data():
     base_dir = Path(__file__).parent
-    path = base_dir / "Nassau-Candy-Distributor.csv"
+    path = base_dir / "Nassau Candy Distributor.csv"
 
     if not path.exists():
         st.error(f"CSV file not found: {path}")
