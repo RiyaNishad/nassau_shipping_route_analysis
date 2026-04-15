@@ -67,6 +67,21 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+    [data-testid="stSlider"] > div > div > div {
+        color: #22c55e !important;
+    }
+
+    [data-baseweb="slider"] div[role="slider"] {
+        background-color: #22c55e !important;
+    }
+
+    [data-baseweb="slider"] div[style*="background"] {
+        background: #22c55e !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 @st.cache_data
 def load_data():
