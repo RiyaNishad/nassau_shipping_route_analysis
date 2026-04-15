@@ -13,29 +13,39 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-    .main {
-        background: radial-gradient(circle at top left, #1e293b 0%, #0f172a 45%, #020617 100%);
-        font-family: 'Inter', sans-serif;
-        color: #e2e8f0;
-    }
-
     [data-testid="stSidebar"] {
         background: linear-gradient(180deg, #1d4ed8 0%, #7c3aed 55%, #111827 100%) !important;
-        border-right: 1px solid rgba(255,255,255,0.12);
     }
 
     [data-testid="stSidebar"] * {
         color: #ffffff !important;
     }
 
-    [data-testid="stSidebar"] .stMultiSelect,
-    [data-testid="stSidebar"] .stSlider,
-    [data-testid="stSidebar"] .stDateInput,
-    [data-testid="stSidebar"] [data-baseweb="select"] {
-        background: rgba(255,255,255,0.12) !important;
-        border-radius: 12px;
+    [data-baseweb="slider"] div[role="slider"] {
+        background-color: #22c55e !important;
+        border-color: #22c55e !important;
+    }
+
+    [data-baseweb="slider"] div[style*="background"] {
+        background: #22c55e !important;
+    }
+
+    [data-testid="stMultiSelect"] [data-baseweb="tag"] {
+        background-color: #3b82f6 !important;
+        color: white !important;
+    }
+
+    [data-testid="stMultiSelect"] [data-baseweb="tag"] svg {
+        fill: white !important;
+    }
+
+    [data-baseweb="select"] {
+        border-radius: 12px !important;
+    }
+
+    .main {
+        background: radial-gradient(circle at top left, #1e293b 0%, #0f172a 45%, #020617 100%);
+        font-family: 'Inter', sans-serif;
     }
 
     .metric-card {
@@ -64,21 +74,6 @@ st.markdown("""
     .stTabs [aria-selected="true"] {
         color: #22c55e !important;
         border-bottom-color: #22c55e !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-st.markdown("""
-<style>
-    [data-testid="stSlider"] > div > div > div {
-        color: #22c55e !important;
-    }
-
-    [data-baseweb="slider"] div[role="slider"] {
-        background-color: #22c55e !important;
-    }
-
-    [data-baseweb="slider"] div[style*="background"] {
-        background: #22c55e !important;
     }
 </style>
 """, unsafe_allow_html=True)
