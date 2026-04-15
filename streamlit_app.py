@@ -13,12 +13,31 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    .main {
+        background: linear-gradient(135deg, #020617 0%, #0f172a 45%, #111827 100%);
+        font-family: 'Inter', sans-serif;
+        color: #e5e7eb;
+    }
+
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1d4ed8 0%, #7c3aed 55%, #111827 100%) !important;
+        background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 55%, #312e81 100%) !important;
+        border-right: 1px solid rgba(255,255,255,0.08);
     }
 
     [data-testid="stSidebar"] * {
         color: #ffffff !important;
+    }
+
+    [data-testid="stSidebar"] [data-baseweb="tag"] {
+        background-color: #3b82f6 !important;
+        color: white !important;
+        border: none !important;
+    }
+
+    [data-testid="stMultiSelect"] [data-baseweb="tag"] svg {
+        fill: white !important;
     }
 
     [data-baseweb="slider"] div[role="slider"] {
@@ -30,27 +49,9 @@ st.markdown("""
         background: #22c55e !important;
     }
 
-    [data-testid="stMultiSelect"] [data-baseweb="tag"] {
-        background-color: #3b82f6 !important;
-        color: white !important;
-    }
-
-    [data-testid="stMultiSelect"] [data-baseweb="tag"] svg {
-        fill: white !important;
-    }
-
-    [data-baseweb="select"] {
-        border-radius: 12px !important;
-    }
-
-    .main {
-        background: radial-gradient(circle at top left, #1e293b 0%, #0f172a 45%, #020617 100%);
-        font-family: 'Inter', sans-serif;
-    }
-
     .metric-card {
         background: linear-gradient(180deg, rgba(15,23,42,0.95), rgba(30,41,59,0.95));
-        border: 1px solid rgba(56,189,248,0.25);
+        border: 1px solid rgba(59,130,246,0.25);
         padding: 1.2rem 1.2rem 1rem 1.2rem;
         border-radius: 16px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.28);
@@ -74,6 +75,41 @@ st.markdown("""
     .stTabs [aria-selected="true"] {
         color: #22c55e !important;
         border-bottom-color: #22c55e !important;
+    }
+
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        background: rgba(255,255,255,0.04);
+        border-radius: 12px;
+        padding: 10px 14px;
+    }
+
+    .stButton button {
+        background: linear-gradient(90deg, #3b82f6, #22c55e);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+    }
+
+    .stSelectbox, .stMultiSelect, .stSlider {
+        border-radius: 12px;
+    }
+
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+    }
+
+    h1, h2, h3, h4 {
+        color: #f8fafc;
+    }
+
+    .stDataFrame {
+        background-color: rgba(15, 23, 42, 0.95);
     }
 </style>
 """, unsafe_allow_html=True)
