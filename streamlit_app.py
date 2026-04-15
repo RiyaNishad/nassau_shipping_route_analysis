@@ -292,6 +292,26 @@ with t2:
             )
 
             st.plotly_chart(fig_map, use_container_width=True)
+            fig_map.update_layout(
+    title=dict(
+        text="Route Lead-Time Intensity by State",
+        x=0.5,
+        xanchor="center",
+        y=0.95,
+        font=dict(size=24, color="#f8fafc")
+    ),
+    annotations=[
+        dict(
+            text="Average lead days across states",
+            x=0.5,
+            y=1.02,
+            xref="paper",
+            yref="paper",
+            showarrow=False,
+            font=dict(size=13, color="#94a3b8")
+        )
+    ]
+)
 
 with t3:
     st.subheader("Product Performance Hierarchy")
