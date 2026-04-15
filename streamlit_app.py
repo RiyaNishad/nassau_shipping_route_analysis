@@ -13,66 +13,57 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
     .main {
-        background-color: #0f172a;
+        background: radial-gradient(circle at top left, #1e293b 0%, #0f172a 45%, #020617 100%);
         font-family: 'Inter', sans-serif;
+        color: #e2e8f0;
     }
 
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0b1220 0%, #111827 100%) !important;
-        border-right: 1px solid #1f2937;
+        background: linear-gradient(180deg, #1d4ed8 0%, #7c3aed 55%, #111827 100%) !important;
+        border-right: 1px solid rgba(255,255,255,0.12);
     }
 
     [data-testid="stSidebar"] * {
-        color: #f8fafc;
+        color: #ffffff !important;
     }
 
-    [data-testid="stSidebar"] [data-baseweb="select"],
-    [data-testid="stSidebar"] [data-baseweb="input"],
-    [data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #1f2937 !important;
-        color: #f8fafc !important;
-        border-color: #374151 !important;
-    }
-
-    [data-testid="stSidebar"] .stMarkdown h3 {
-        color: #fcd34d !important;
-        font-weight: 700;
+    [data-testid="stSidebar"] .stMultiSelect,
+    [data-testid="stSidebar"] .stSlider,
+    [data-testid="stSidebar"] .stDateInput,
+    [data-testid="stSidebar"] [data-baseweb="select"] {
+        background: rgba(255,255,255,0.12) !important;
+        border-radius: 12px;
     }
 
     .metric-card {
-        background: #1e293b;
-        border: 1px solid #334155;
+        background: linear-gradient(180deg, rgba(15,23,42,0.95), rgba(30,41,59,0.95));
+        border: 1px solid rgba(56,189,248,0.25);
         padding: 1.2rem 1.2rem 1rem 1.2rem;
-        border-radius: 14px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.28);
     }
 
     .metric-label {
         color: #94a3b8;
         font-size: 11px;
-        font-weight: 700;
+        font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 1.2px;
     }
 
     .metric-value {
         color: #f8fafc;
-        font-size: 26px;
+        font-size: 28px;
         font-weight: 800;
         margin-top: 8px;
     }
 
     .stTabs [aria-selected="true"] {
-        color: #fcd34d !important;
-        border-bottom-color: #fcd34d !important;
-    }
-
-    .block-container {
-        padding-top: 1rem;
-        padding-bottom: 2rem;
+        color: #22c55e !important;
+        border-bottom-color: #22c55e !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -254,24 +245,53 @@ with t1:
 
 with t2:
     st.subheader("Route Lead-Time Intensity")
+
     if "State_Code" in filtered.columns:
-        m_data = filtered.groupby(["State_Code", "State/Province"], as_index=False).agg(Lead_Days=("Lead_Days", "mean"))
-        m_data = m_data[m_data["State_Code"] != ""]
-        if not m_data.empty:
-            st.plotly_chart(
-                px.choropleth(
-                    m_data,
-                    locations="State_Code",
-                    locationmode="USA-states",
-                    color="Lead_Days",
-                    scope="usa",
-                    template="plotly_dark",
-                    color_continuous_scale="YlOrRd"
-                ),
-                use_container_width=True
+        map_data = filtered.groupby(["State_Code", "State/Province"], as_index=False).agg(
+            Lead_Days=("Lead_Days", "mean"),
+            Sales=("Sales", "sum"),
+            Orders=("Order Date", "count")
+        )
+        map_data = map_data[map_data["State_Code"] != ""]
+
+        if not map_data.empty:
+            fig_map = px.choropleth(
+                map_data,
+                locations="State_Code",
+                locationmode="USA-states",
+                color="Lead_Days",
+                scope="usa",
+                hover_name="State/Province",
+                hover_data={
+                    "State_Code": False,
+                    "Lead_Days": ":.1f",
+                    "Sales": ":,.2f",
+                    "Orders": True
+                },
+                color_continuous_scale=["#e0f2fe", "#7dd3fc", "#38bdf8", "#0ea5e9", "#0369a1"],
             )
-        else:
-            st.info("No valid state codes available for the map.")
+
+            fig_map.update_traces(
+                marker_line_color="white",
+                marker_line_width=1.1
+            )
+
+            fig_map.update_layout(
+                template="plotly_dark",
+                height=600,
+                margin=dict(l=10, r=10, t=20, b=10),
+                geo=dict(
+                    bgcolor="rgba(0,0,0,0)",
+                    lakecolor="rgba(0,0,0,0)",
+                    showlakes=True,
+                    showland=True,
+                    landcolor="#0f172a",
+                    subunitcolor="white",
+                    countrycolor="white"
+                )
+            )
+
+            st.plotly_chart(fig_map, use_container_width=True)
 
 with t3:
     st.subheader("Product Performance Hierarchy")
