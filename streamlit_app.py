@@ -14,31 +14,46 @@ st.set_page_config(
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    .main { background-color: #0f172a; font-family: 'Inter', sans-serif; }
+
+    .main {
+        background-color: #0f172a;
+        font-family: 'Inter', sans-serif;
+    }
 
     [data-testid="stSidebar"] {
-        background-color: #111827 !important;
+        background: linear-gradient(180deg, #0b1220 0%, #111827 100%) !important;
         border-right: 1px solid #1f2937;
     }
 
+    [data-testid="stSidebar"] * {
+        color: #f8fafc;
+    }
+
+    [data-testid="stSidebar"] [data-baseweb="select"],
+    [data-testid="stSidebar"] [data-baseweb="input"],
     [data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #374151 !important;
-        color: #f3f4f6 !important;
-        border: 1px solid #4b5563;
+        background-color: #1f2937 !important;
+        color: #f8fafc !important;
+        border-color: #374151 !important;
+    }
+
+    [data-testid="stSidebar"] .stMarkdown h3 {
+        color: #fcd34d !important;
+        font-weight: 700;
     }
 
     .metric-card {
         background: #1e293b;
         border: 1px solid #334155;
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        padding: 1.2rem 1.2rem 1rem 1.2rem;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
     }
 
     .metric-label {
         color: #94a3b8;
         font-size: 11px;
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1.2px;
     }
@@ -46,7 +61,7 @@ st.markdown("""
     .metric-value {
         color: #f8fafc;
         font-size: 26px;
-        font-weight: 700;
+        font-weight: 800;
         margin-top: 8px;
     }
 
@@ -54,30 +69,34 @@ st.markdown("""
         color: #fcd34d !important;
         border-bottom-color: #fcd34d !important;
     }
+
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-from pathlib import Path
-import streamlit as st
-import pandas as pd
-
 @st.cache_data
 def load_data():
+    current_dir = Path(__file__).resolve().parent
+    parent_dir = current_dir.parent
+
     candidates = [
-        Path("Nassau Candy Distributor.csv"),
-        Path("Nassau-Candy-Distributor.csv"),
-        Path(__file__).resolve().parent / "Nassau Candy Distributor.csv",
-        Path(__file__).resolve().parent / "Nassau-Candy-Distributor.csv",
+        current_dir / "Nassau Candy Distributor.csv",
+        current_dir / "Nassau-Candy-Distributor.csv",
+        parent_dir / "Nassau Candy Distributor.csv",
+        parent_dir / "Nassau-Candy-Distributor.csv",
+        Path.cwd() / "Nassau Candy Distributor.csv",
+        Path.cwd() / "Nassau-Candy-Distributor.csv",
     ]
 
     path = next((p for p in candidates if p.exists()), None)
 
     if path is None:
-        st.error("CSV file not found. Check the filename and whether it is committed to the repo.")
+        st.error("CSV file not found in app folder, parent folder, or current working directory.")
         st.stop()
 
-    return pd.read_csv(path)
-    
     df = pd.read_csv(path)
     df.columns = [c.strip() for c in df.columns]
 
@@ -85,191 +104,196 @@ def load_data():
     df["Ship Date"] = pd.to_datetime(df["Ship Date"], errors="coerce", dayfirst=True)
     df["Lead_Days"] = (df["Ship Date"] - df["Order Date"]).dt.days
 
-    for col in ["Sales", "Units", "Gross Profit"]:
+    for col in ["Sales", "Units", "Gross Profit", "Cost"]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    state_map = {
-        "California": "CA",
-        "Texas": "TX",
-        "New York": "NY",
-        "Florida": "FL",
-        "Illinois": "IL"
-    }
+    if "State/Province" in df.columns:
+        state_map = {
+            "California": "CA",
+            "Texas": "TX",
+            "New York": "NY",
+            "Florida": "FL",
+            "Illinois": "IL",
+            "Pennsylvania": "PA",
+            "Washington": "WA",
+            "Ohio": "OH",
+            "Georgia": "GA",
+            "Michigan": "MI",
+            "North Carolina": "NC",
+            "Virginia": "VA",
+            "Arizona": "AZ",
+            "Louisiana": "LA",
+            "Colorado": "CO",
+            "Oregon": "OR",
+            "Wisconsin": "WI",
+            "Massachusetts": "MA",
+            "New Jersey": "NJ",
+            "Tennessee": "TN",
+            "Maryland": "MD",
+            "Indiana": "IN",
+            "Missouri": "MO",
+            "Minnesota": "MN",
+            "Connecticut": "CT",
+            "Kentucky": "KY",
+            "Alabama": "AL",
+            "South Carolina": "SC",
+            "Oklahoma": "OK",
+            "Kansas": "KS",
+            "Utah": "UT",
+            "Nevada": "NV",
+            "Idaho": "ID",
+            "Iowa": "IA",
+            "Arkansas": "AR",
+            "Mississippi": "MS",
+            "Delaware": "DE",
+            "Maine": "ME",
+            "New Hampshire": "NH",
+            "Rhode Island": "RI",
+            "Vermont": "VT",
+            "West Virginia": "WV",
+            "Nebraska": "NE",
+            "New Mexico": "NM",
+            "Montana": "MT",
+            "North Dakota": "ND",
+            "South Dakota": "SD",
+            "Wyoming": "WY",
+        }
+        df["State_Code"] = df["State/Province"].map(state_map).fillna("")
+    else:
+        df["State_Code"] = ""
 
-    df["State_Code"] = df["State/Province"].map(state_map).fillna("")
     return df
 
 df = load_data()
 
 with st.sidebar:
-    st.image("https://www.nassaucandy.com/skin/frontend/enterprise/nassaucandy/images/logo.png", use_container_width=True)
     st.markdown("### Control Panel")
 
-    region_options = sorted(df["Region"].dropna().unique().tolist())
-    product_options = sorted(df["Product Name"].dropna().unique().tolist())
-    ship_options = sorted(df["Ship Mode"].dropna().unique().tolist())
+    region_options = sorted(df["Region"].dropna().unique().tolist()) if "Region" in df.columns else []
+    ship_options = sorted(df["Ship Mode"].dropna().unique().tolist()) if "Ship Mode" in df.columns else []
+    product_options = sorted(df["Product Name"].dropna().unique().tolist()) if "Product Name" in df.columns else []
 
-    sel_regions = st.multiselect(
-        "Region",
-        region_options,
-        default=region_options,
-        key="ux_reg_f"
-    )
+    sel_regions = st.multiselect("Region", region_options, default=region_options, key="ux_reg_f")
+    sel_ship = st.multiselect("Ship Mode", ship_options, default=ship_options, key="ux_ship_f")
+    sel_prods = st.multiselect("Products", product_options, default=[], key="ux_prod_f")
 
-    sel_prods = st.multiselect(
-        "Products",
-        product_options,
-        default=[],
-        key="ux_prod_f"
-    )
-
-    sel_ship = st.multiselect(
-        "Ship Mode",
-        ship_options,
-        default=ship_options,
-        key="ux_ship_f"
-    )
-
-    l_max = int(df["Lead_Days"].dropna().max()) if not df["Lead_Days"].dropna().empty else 100
+    l_max = int(df["Lead_Days"].dropna().max()) if not df["Lead_Days"].dropna().empty else 30
     l_range = st.slider("Lead Time Filter", 0, l_max, (0, l_max), key="ux_lead_f")
 
-mask = df["Region"].isin(sel_regions) & df["Ship Mode"].isin(sel_ship)
+mask = pd.Series(True, index=df.index)
 
-if sel_prods:
+if "Region" in df.columns and sel_regions:
+    mask &= df["Region"].isin(sel_regions)
+
+if "Ship Mode" in df.columns and sel_ship:
+    mask &= df["Ship Mode"].isin(sel_ship)
+
+if sel_prods and "Product Name" in df.columns:
     mask &= df["Product Name"].isin(sel_prods)
 
 filtered = df[mask].copy()
 filtered = filtered[
-    (filtered["Lead_Days"].fillna(0) >= l_range[0]) &
-    (filtered["Lead_Days"].fillna(0) <= l_range[1])
+    filtered["Lead_Days"].fillna(0).between(l_range[0], l_range[1])
 ]
 
 st.title("Strategic Route Intelligence")
 
 k1, k2, k3, k4, k5, k6 = st.columns(6)
 
-sales_val = filtered["Sales"].sum(skipna=True)
-profit_val = filtered["Gross Profit"].sum(skipna=True)
+sales_val = filtered["Sales"].sum(skipna=True) if "Sales" in filtered.columns else 0
+profit_val = filtered["Gross Profit"].sum(skipna=True) if "Gross Profit" in filtered.columns else 0
 margin_val = (profit_val / sales_val * 100) if sales_val > 0 else 0
-late_val = len(filtered[filtered["Lead_Days"] > 7])
-avg_lead = filtered["Lead_Days"].mean(skipna=True)
+late_val = int((filtered["Lead_Days"] > 7).sum()) if "Lead_Days" in filtered.columns else 0
+avg_lead = filtered["Lead_Days"].mean(skipna=True) if "Lead_Days" in filtered.columns else np.nan
 status_val = "Optimal" if margin_val > 20 else "Review"
 
+metric_html = lambda label, value, extra="": f'''
+<div class="metric-card">
+    <div class="metric-label">{label}</div>
+    <div class="metric-value">{value}</div>
+    {extra}
+</div>
+'''
+
 with k1:
-    st.markdown(
-        f'<div class="metric-card"><div class="metric-label">Sales</div><div class="metric-value">${sales_val:,.0f}</div></div>',
-        unsafe_allow_html=True
-    )
+    st.markdown(metric_html("Sales", f"${sales_val:,.0f}"), unsafe_allow_html=True)
 with k2:
-    st.markdown(
-        f'<div class="metric-card"><div class="metric-label">Profit</div><div class="metric-value">${profit_val:,.0f}</div></div>',
-        unsafe_allow_html=True
-    )
+    st.markdown(metric_html("Profit", f"${profit_val:,.0f}"), unsafe_allow_html=True)
 with k3:
-    st.markdown(
-        f'<div class="metric-card"><div class="metric-label">Margin</div><div class="metric-value">{margin_val:.1f}%</div></div>',
-        unsafe_allow_html=True
-    )
+    st.markdown(metric_html("Margin", f"{margin_val:.1f}%"), unsafe_allow_html=True)
 with k4:
-    st.markdown(
-        f'<div class="metric-card"><div class="metric-label">Late Orders</div><div class="metric-value" style="color:#ef4444;">{late_val:,}</div></div>',
-        unsafe_allow_html=True
-    )
+    st.markdown(metric_html("Late Orders", f"{late_val:,}", '<div class="metric-label" style="color:#ef4444;">> 7 lead days</div>'), unsafe_allow_html=True)
 with k5:
-    st.markdown(
-        f'<div class="metric-card"><div class="metric-label">Avg Lead</div><div class="metric-value">{avg_lead:.1f}d</div></div>',
-        unsafe_allow_html=True
-    )
+    st.markdown(metric_html("Avg Lead", f"{avg_lead:.1f}d" if pd.notna(avg_lead) else "N/A"), unsafe_allow_html=True)
 with k6:
-    st.markdown(
-        f'<div class="metric-card"><div class="metric-label">Status</div><div class="metric-value">{status_val}</div></div>',
-        unsafe_allow_html=True
-    )
+    st.markdown(metric_html("Status", status_val), unsafe_allow_html=True)
 
 t1, t2, t3, t4, t5 = st.tabs(["🚀 Strategy", "🗺️ Routes", "📦 Products", "📊 Efficiency", "📑 Ledger"])
 ACCENT = "#38bdf8"
 
 with t1:
     st.subheader("Revenue vs. Profit Growth")
-    trend = filtered.groupby("Order Date", as_index=False).agg({"Sales": "sum", "Gross Profit": "sum"})
-    fig_trend = go.Figure()
-    fig_trend.add_trace(go.Scatter(
-        x=trend["Order Date"], y=trend["Sales"], name="Sales",
-        line=dict(color=ACCENT), fill="tozeroy"
-    ))
-    fig_trend.add_trace(go.Scatter(
-        x=trend["Order Date"], y=trend["Gross Profit"], name="Profit",
-        line=dict(color="#fcd34d")
-    ))
-    fig_trend.update_layout(template="plotly_dark", height=350)
-    st.plotly_chart(fig_trend, use_container_width=True)
+    if "Order Date" in filtered.columns and "Sales" in filtered.columns and "Gross Profit" in filtered.columns:
+        trend = filtered.groupby("Order Date", as_index=False).agg({"Sales": "sum", "Gross Profit": "sum"})
+        fig_trend = go.Figure()
+        fig_trend.add_trace(go.Scatter(x=trend["Order Date"], y=trend["Sales"], name="Sales", line=dict(color=ACCENT), fill="tozeroy"))
+        fig_trend.add_trace(go.Scatter(x=trend["Order Date"], y=trend["Gross Profit"], name="Profit", line=dict(color="#fcd34d")))
+        fig_trend.update_layout(template="plotly_dark", height=350)
+        st.plotly_chart(fig_trend, use_container_width=True)
 
     c1, c2 = st.columns(2)
     with c1:
-        region_sales = filtered.groupby("Region", as_index=False)["Sales"].sum()
-        fig1 = px.bar(region_sales, x="Region", y="Sales", template="plotly_dark",
-                      color_discrete_sequence=[ACCENT])
-        st.plotly_chart(fig1, use_container_width=True)
-
+        if "Region" in filtered.columns and "Sales" in filtered.columns:
+            region_sales = filtered.groupby("Region", as_index=False)["Sales"].sum()
+            st.plotly_chart(px.bar(region_sales, x="Region", y="Sales", template="plotly_dark", color_discrete_sequence=[ACCENT]), use_container_width=True)
     with c2:
-        region_profit = filtered.groupby("Region", as_index=False)["Gross Profit"].sum()
-        fig2 = px.pie(region_profit, names="Region", values="Gross Profit",
-                      hole=0.5, template="plotly_dark")
-        st.plotly_chart(fig2, use_container_width=True)
+        if "Region" in filtered.columns and "Gross Profit" in filtered.columns:
+            region_profit = filtered.groupby("Region", as_index=False)["Gross Profit"].sum()
+            st.plotly_chart(px.pie(region_profit, names="Region", values="Gross Profit", hole=0.5, template="plotly_dark"), use_container_width=True)
 
 with t2:
     st.subheader("Route Lead-Time Intensity")
-    m_data = filtered.groupby(["State_Code", "State/Province"], as_index=False).agg(
-        Lead_Days=("Lead_Days", "mean")
-    )
-    m_data = m_data[m_data["State_Code"] != ""]
-    if not m_data.empty:
-        fig_map = px.choropleth(
-            m_data,
-            locations="State_Code",
-            locationmode="USA-states",
-            color="Lead_Days",
-            scope="usa",
-            template="plotly_dark",
-            color_continuous_scale="YlOrRd"
-        )
-        st.plotly_chart(fig_map, use_container_width=True)
-    else:
-        st.info("No state data available for map display.")
+    if "State_Code" in filtered.columns:
+        m_data = filtered.groupby(["State_Code", "State/Province"], as_index=False).agg(Lead_Days=("Lead_Days", "mean"))
+        m_data = m_data[m_data["State_Code"] != ""]
+        if not m_data.empty:
+            st.plotly_chart(
+                px.choropleth(
+                    m_data,
+                    locations="State_Code",
+                    locationmode="USA-states",
+                    color="Lead_Days",
+                    scope="usa",
+                    template="plotly_dark",
+                    color_continuous_scale="YlOrRd"
+                ),
+                use_container_width=True
+            )
+        else:
+            st.info("No valid state codes available for the map.")
 
 with t3:
     st.subheader("Product Performance Hierarchy")
-    if "Division" in filtered.columns:
+    if "Division" in filtered.columns and "Region" in filtered.columns and "Sales" in filtered.columns:
         sun = filtered.dropna(subset=["Division", "Region"]).copy()
         if not sun.empty:
-            st.plotly_chart(
-                px.sunburst(sun, path=["Division", "Region"], values="Sales", template="plotly_dark"),
-                use_container_width=True
-            )
+            st.plotly_chart(px.sunburst(sun, path=["Division", "Region"], values="Sales", template="plotly_dark"), use_container_width=True)
 
-    prod_sales = filtered.groupby("Product Name", as_index=False)["Sales"].sum().nlargest(10, "Sales")
-    fig_prod = px.bar(
-        prod_sales,
-        x="Sales",
-        y="Product Name",
-        orientation="h",
-        template="plotly_dark",
-        color_discrete_sequence=[ACCENT]
-    )
-    st.plotly_chart(fig_prod, use_container_width=True)
+    if "Product Name" in filtered.columns and "Sales" in filtered.columns:
+        prod_sales = filtered.groupby("Product Name", as_index=False)["Sales"].sum().nlargest(10, "Sales")
+        st.plotly_chart(
+            px.bar(prod_sales, x="Sales", y="Product Name", orientation="h", template="plotly_dark", color_discrete_sequence=[ACCENT]),
+            use_container_width=True
+        )
 
 with t4:
     st.subheader("Efficiency Matrix: Lead Time vs Profit")
-    fig_scatter = px.scatter(
-        filtered,
-        x="Lead_Days",
-        y="Gross Profit",
-        color="Ship Mode",
-        size="Sales",
-        template="plotly_dark"
-    )
-    st.plotly_chart(fig_scatter, use_container_width=True)
+    if "Lead_Days" in filtered.columns and "Gross Profit" in filtered.columns:
+        st.plotly_chart(
+            px.scatter(filtered, x="Lead_Days", y="Gross Profit", color="Ship Mode", size="Sales", template="plotly_dark"),
+            use_container_width=True
+        )
 
 with t5:
     st.subheader("Transaction Audit Ledger")
