@@ -16,49 +16,49 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
     .main {
-        background: linear-gradient(135deg, #111827 0%, #1f2937 45%, #374151 100%);
+        background: linear-gradient(135deg, #2b2118 0%, #3a2a20 45%, #4a3628 100%);
         font-family: 'Inter', sans-serif;
-        color: #e5e7eb;
+        color: #f8f1e7;
     }
 
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #5f4f2a 0%, #7a682f 50%, #463b1e 100%) !important;
+        background: linear-gradient(180deg, #6f4e37 0%, #8b5e3c 50%, #5a3f2e 100%) !important;
         border-right: 1px solid rgba(255,255,255,0.08);
     }
 
     [data-testid="stSidebar"] * {
-        color: #f8f1d8 !important;
+        color: #f8f1e7 !important;
     }
 
     [data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #c9b36a !important;
-        color: #111827 !important;
+        background-color: #d7b899 !important;
+        color: #2b2118 !important;
         border: none !important;
     }
 
     [data-testid="stSidebar"] [data-baseweb="tag"] svg {
-        fill: #111827 !important;
+        fill: #2b2118 !important;
     }
 
     [data-baseweb="slider"] div[role="slider"] {
-        background-color: #c9b36a !important;
-        border-color: #c9b36a !important;
+        background-color: #d7b899 !important;
+        border-color: #d7b899 !important;
     }
 
     [data-baseweb="slider"] div[style*="background"] {
-        background: #c9b36a !important;
+        background: #d7b899 !important;
     }
 
     .metric-card {
-        background: linear-gradient(180deg, #1f2937, #111827);
-        border: 1px solid #4b5563;
+        background: linear-gradient(180deg, #3a2a20, #2b2118);
+        border: 1px solid #8b5e3c;
         padding: 1.2rem;
         border-radius: 16px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
 
     .metric-label {
-        color: #9ca3af;
+        color: #d7b899;
         font-size: 11px;
         font-weight: 800;
         text-transform: uppercase;
@@ -66,25 +66,25 @@ st.markdown("""
     }
 
     .metric-value {
-        color: #f9fafb;
+        color: #fff8ef;
         font-size: 28px;
         font-weight: 800;
         margin-top: 8px;
     }
 
     .stTabs [aria-selected="true"] {
-        color: #cbd5e1 !important;
-        border-bottom-color: #cbd5e1 !important;
+        color: #d7b899 !important;
+        border-bottom-color: #d7b899 !important;
     }
 
     .stTabs [data-baseweb="tab"] {
-        background: rgba(255,255,255,0.04);
+        background: rgba(255,255,255,0.05);
         border-radius: 12px;
         padding: 10px 14px;
     }
 
     h1, h2, h3, h4 {
-        color: #f9fafb;
+        color: #fff8ef;
     }
 
     .block-container {
@@ -232,9 +232,9 @@ with k6:
     st.markdown(metric_html("Status", status_val), unsafe_allow_html=True)
 
 t1, t2, t3, t4 = st.tabs(["🚀 Strategy", "🗺️ Routes", "📦 Products", "📑 Ledger"])
-ACCENT = "#cbd5e1"
-SECONDARY = "#9ca3af"
-HIGHLIGHT = "#6b7280"
+ACCENT = "#d7b899"
+SECONDARY = "#a67c52"
+HIGHLIGHT = "#f4ede4"
 
 with t1:
     st.subheader("Revenue vs Profit Growth")
@@ -259,7 +259,7 @@ with t1:
             region_profit = filtered.groupby("Region", as_index=False)["Gross Profit"].sum()
             st.plotly_chart(
                 px.pie(region_profit, names="Region", values="Gross Profit", hole=0.5, template="plotly_dark",
-                       color_discrete_sequence=[ACCENT, SECONDARY, HIGHLIGHT, "#e5e7eb"]),
+                       color_discrete_sequence=[ACCENT, SECONDARY, "#8b5e3c", "#f4ede4"]),
                 use_container_width=True
             )
 
@@ -287,7 +287,7 @@ with t2:
                     "Sales": ":,.2f",
                     "Orders": True
                 },
-                color_continuous_scale=["#f3f4f6", "#d1d5db", "#9ca3af", "#6b7280", "#374151"],
+                color_continuous_scale=["#f4ede4", "#d7b899", "#b07d54", "#8b5e3c", "#5a3f2e"],
             )
 
             fig_map.add_scattergeo(
@@ -295,7 +295,7 @@ with t2:
                 locationmode="USA-states",
                 text=map_data["State_Code"],
                 mode="text",
-                textfont=dict(size=10, color="white", family="Inter"),
+                textfont=dict(size=10, color="#fff8ef", family="Inter"),
                 showlegend=False
             )
 
@@ -313,7 +313,7 @@ with t2:
                         xref="paper",
                         yref="paper",
                         showarrow=False,
-                        font=dict(size=13, color="#d1d5db")
+                        font=dict(size=13, color="#f4ede4")
                     )
                 ],
                 geo=dict(
@@ -321,9 +321,9 @@ with t2:
                     lakecolor="rgba(0,0,0,0)",
                     showlakes=True,
                     showland=True,
-                    landcolor="#111827",
-                    subunitcolor="#9ca3af",
-                    countrycolor="#9ca3af"
+                    landcolor="#2b2118",
+                    subunitcolor="#d7b899",
+                    countrycolor="#d7b899"
                 )
             )
             st.plotly_chart(fig_map, use_container_width=True)
