@@ -22,16 +22,16 @@ st.markdown("""
     }
 
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #7c6f35 0%, #a68a2e 50%, #5f5120 100%) !important;
+        background: linear-gradient(180deg, #6b7280 0%, #4b5563 50%, #374151 100%) !important;
         border-right: 1px solid rgba(255,255,255,0.08);
     }
 
     [data-testid="stSidebar"] * {
-        color: #fff8dc !important;
+        color: #f9fafb !important;
     }
 
     [data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #d4af37 !important;
+        background-color: #9ca3af !important;
         color: #111827 !important;
         border: none !important;
     }
@@ -41,12 +41,12 @@ st.markdown("""
     }
 
     [data-baseweb="slider"] div[role="slider"] {
-        background-color: #d4af37 !important;
-        border-color: #d4af37 !important;
+        background-color: #d1d5db !important;
+        border-color: #d1d5db !important;
     }
 
     [data-baseweb="slider"] div[style*="background"] {
-        background: #d4af37 !important;
+        background: #d1d5db !important;
     }
 
     .metric-card {
@@ -73,8 +73,8 @@ st.markdown("""
     }
 
     .stTabs [aria-selected="true"] {
-        color: #d4af37 !important;
-        border-bottom-color: #d4af37 !important;
+        color: #d1d5db !important;
+        border-bottom-color: #d1d5db !important;
     }
 
     .stTabs [data-baseweb="tab"] {
@@ -233,9 +233,9 @@ with k6:
     st.markdown(metric_html("Status", status_val), unsafe_allow_html=True)
 
 t1, t2, t3, t4 = st.tabs(["🚀 Strategy", "🗺️ Routes", "📦 Products", "📑 Ledger"])
-ACCENT = "#d4af37"
+ACCENT = "#d1d5db"
 SECONDARY = "#9ca3af"
-TEAL = "#6b7280"
+HIGHLIGHT = "#6b7280"
 
 with t1:
     st.subheader("Revenue vs Profit Growth")
@@ -260,7 +260,7 @@ with t1:
             region_profit = filtered.groupby("Region", as_index=False)["Gross Profit"].sum()
             st.plotly_chart(
                 px.pie(region_profit, names="Region", values="Gross Profit", hole=0.5, template="plotly_dark",
-                       color_discrete_sequence=[ACCENT, SECONDARY, "#6b7280", "#a3a3a3"]),
+                       color_discrete_sequence=[ACCENT, SECONDARY, HIGHLIGHT, "#e5e7eb"]),
                 use_container_width=True
             )
 
@@ -290,6 +290,16 @@ with t2:
                 },
                 color_continuous_scale=["#f3f4f6", "#d1d5db", "#9ca3af", "#6b7280", "#374151"],
             )
+
+            fig_map.add_scattergeo(
+                locations=map_data["State_Code"],
+                locationmode="USA-states",
+                text=map_data["State_Code"],
+                mode="text",
+                textfont=dict(size=10, color="white", family="Inter"),
+                showlegend=False
+            )
+
             fig_map.update_traces(marker_line_color="white", marker_line_width=1.1)
             fig_map.update_layout(
                 template="plotly_dark",
