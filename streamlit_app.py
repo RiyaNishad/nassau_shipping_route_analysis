@@ -153,7 +153,14 @@ def load_data():
 
 df = load_data()
 
-st.title("Strategic Route Intelligence")
+st.title("Nassau Candy Route Intelligence")
+st.markdown("""
+<p style='font-size:18px; color:#f4ede4; margin-top:-8px;'>
+A focused view of sales, route efficiency, product performance, and delivery lead times — designed to reveal what is working and where delays are building.
+</p>
+""", unsafe_allow_html=True)
+
+st.caption("Monitor performance across regions, shipping modes, and products with a clean operations-first view.")
 
 order_id_input = st.text_input("Enter Customer Order ID", placeholder="Type Order ID here...")
 
@@ -230,6 +237,16 @@ with k5:
     st.markdown(metric_html("Avg Lead", f"{avg_lead:.1f}d" if pd.notna(avg_lead) else "N/A"), unsafe_allow_html=True)
 with k6:
     st.markdown(metric_html("Status", status_val), unsafe_allow_html=True)
+
+st.markdown("## Insights")
+
+insight1 = f"• Sales are ${sales_val:,.0f}, with profit at ${profit_val:,.0f} and margin at {margin_val:.1f}%."
+insight2 = f"• Average lead time is {avg_lead:.1f} days, and {late_val:,} orders are delayed beyond the threshold."
+insight3 = "• Use the route map to spot states with slower delivery patterns and the product tab to identify top movers."
+
+st.markdown(insight1)
+st.markdown(insight2)
+st.markdown(insight3)
 
 t1, t2, t3, t4 = st.tabs(["🚀 Strategy", "🗺️ Routes", "📦 Products", "📑 Ledger"])
 ACCENT = "#d7b899"
