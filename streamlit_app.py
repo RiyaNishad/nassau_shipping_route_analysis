@@ -16,49 +16,49 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
     .main {
-        background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 45%, #fdfdff 100%);
+        background: linear-gradient(135deg, #111827 0%, #1f2937 45%, #374151 100%);
         font-family: 'Inter', sans-serif;
-        color: #0f172a;
+        color: #e5e7eb;
     }
 
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 45%, #eff6ff 100%) !important;
-        border-right: 1px solid #cbd5e1;
+        background: linear-gradient(180deg, #7c6f35 0%, #a68a2e 50%, #5f5120 100%) !important;
+        border-right: 1px solid rgba(255,255,255,0.08);
     }
 
     [data-testid="stSidebar"] * {
-        color: #0f172a !important;
+        color: #fff8dc !important;
     }
 
     [data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #2563eb !important;
-        color: white !important;
+        background-color: #d4af37 !important;
+        color: #111827 !important;
         border: none !important;
     }
 
     [data-testid="stSidebar"] [data-baseweb="tag"] svg {
-        fill: white !important;
+        fill: #111827 !important;
     }
 
     [data-baseweb="slider"] div[role="slider"] {
-        background-color: #2563eb !important;
-        border-color: #2563eb !important;
+        background-color: #d4af37 !important;
+        border-color: #d4af37 !important;
     }
 
     [data-baseweb="slider"] div[style*="background"] {
-        background: #2563eb !important;
+        background: #d4af37 !important;
     }
 
     .metric-card {
-        background: linear-gradient(180deg, #ffffff, #f8fbff);
-        border: 1px solid #dbeafe;
+        background: linear-gradient(180deg, #1f2937, #111827);
+        border: 1px solid #4b5563;
         padding: 1.2rem;
         border-radius: 16px;
-        box-shadow: 0 8px 20px rgba(59,130,246,0.08);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.18);
     }
 
     .metric-label {
-        color: #64748b;
+        color: #9ca3af;
         font-size: 11px;
         font-weight: 800;
         text-transform: uppercase;
@@ -66,25 +66,30 @@ st.markdown("""
     }
 
     .metric-value {
-        color: #0f172a;
+        color: #f9fafb;
         font-size: 28px;
         font-weight: 800;
         margin-top: 8px;
     }
 
     .stTabs [aria-selected="true"] {
-        color: #2563eb !important;
-        border-bottom-color: #2563eb !important;
+        color: #d4af37 !important;
+        border-bottom-color: #d4af37 !important;
     }
 
     .stTabs [data-baseweb="tab"] {
-        background: rgba(255,255,255,0.9);
+        background: rgba(255,255,255,0.04);
         border-radius: 12px;
         padding: 10px 14px;
     }
 
     h1, h2, h3, h4 {
-        color: #0f172a;
+        color: #f9fafb;
+    }
+
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 2rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -198,49 +203,6 @@ if filtered.empty:
     st.warning("No records match the current filters.")
     st.stop()
 
-map_data = filtered.groupby(["State_Code", "State/Province"], as_index=False).agg(
-    Lead_Days=("Lead_Days", "mean"),
-    Sales=("Sales", "sum"),
-    Orders=("Order Date", "count")
-)
-map_data = map_data[map_data["State_Code"] != ""]
-
-fig_map = px.choropleth(
-    map_data,
-    locations="State_Code",
-    locationmode="USA-states",
-    color="Lead_Days",
-    scope="usa",
-    hover_name="State/Province",
-    hover_data={
-        "State_Code": False,
-        "Lead_Days": ":.1f",
-        "Sales": ":,.2f",
-        "Orders": True
-    },
-    color_continuous_scale=["#eff6ff", "#bfdbfe", "#60a5fa", "#3b82f6", "#1d4ed8"],
-)
-
-fig_map.add_scattergeo(
-    locations=map_data["State_Code"],
-    locationmode="USA-states",
-    text=map_data["State_Code"],
-    mode="text",
-    textfont=dict(size=10, color="#0f172a", family="Inter"),
-    showlegend=False
-)
-
-fig_map.update_layout(
-    template="plotly_white",
-    title=dict(text="Route Lead-Time Intensity by State", x=0.5),
-    geo=dict(
-        scope="usa",
-        showlakes=True,
-        lakecolor="rgb(255,255,255)",
-        bgcolor="rgba(0,0,0,0)"
-    )
-)
-
 k1, k2, k3, k4, k5, k6 = st.columns(6)
 
 sales_val = filtered["Sales"].sum(skipna=True) if "Sales" in filtered.columns else 0
@@ -271,9 +233,9 @@ with k6:
     st.markdown(metric_html("Status", status_val), unsafe_allow_html=True)
 
 t1, t2, t3, t4 = st.tabs(["🚀 Strategy", "🗺️ Routes", "📦 Products", "📑 Ledger"])
-ACCENT = "#3b82f6"
-GOLD = "#f59e0b"
-TEAL = "#14b8a6"
+ACCENT = "#d4af37"
+SECONDARY = "#9ca3af"
+TEAL = "#6b7280"
 
 with t1:
     st.subheader("Revenue vs Profit Growth")
@@ -281,8 +243,8 @@ with t1:
         trend = filtered.groupby("Order Date", as_index=False).agg({"Sales": "sum", "Gross Profit": "sum"})
         fig_trend = go.Figure()
         fig_trend.add_trace(go.Scatter(x=trend["Order Date"], y=trend["Sales"], name="Sales", line=dict(color=ACCENT), fill="tozeroy"))
-        fig_trend.add_trace(go.Scatter(x=trend["Order Date"], y=trend["Gross Profit"], name="Profit", line=dict(color=GOLD)))
-        fig_trend.update_layout(template="plotly_white", height=350, margin=dict(l=10, r=10, t=30, b=10))
+        fig_trend.add_trace(go.Scatter(x=trend["Order Date"], y=trend["Gross Profit"], name="Profit", line=dict(color=SECONDARY)))
+        fig_trend.update_layout(template="plotly_dark", height=350, margin=dict(l=10, r=10, t=30, b=10))
         st.plotly_chart(fig_trend, use_container_width=True)
 
     c1, c2 = st.columns(2)
@@ -290,15 +252,15 @@ with t1:
         if "Region" in filtered.columns and "Sales" in filtered.columns:
             region_sales = filtered.groupby("Region", as_index=False)["Sales"].sum()
             st.plotly_chart(
-                px.bar(region_sales, x="Region", y="Sales", template="plotly_white", color_discrete_sequence=[ACCENT]),
+                px.bar(region_sales, x="Region", y="Sales", template="plotly_dark", color_discrete_sequence=[ACCENT]),
                 use_container_width=True
             )
     with c2:
         if "Region" in filtered.columns and "Gross Profit" in filtered.columns:
             region_profit = filtered.groupby("Region", as_index=False)["Gross Profit"].sum()
             st.plotly_chart(
-                px.pie(region_profit, names="Region", values="Gross Profit", hole=0.5, template="plotly_white",
-                       color_discrete_sequence=[ACCENT, TEAL, GOLD, "#8b5cf6"]),
+                px.pie(region_profit, names="Region", values="Gross Profit", hole=0.5, template="plotly_dark",
+                       color_discrete_sequence=[ACCENT, SECONDARY, "#6b7280", "#a3a3a3"]),
                 use_container_width=True
             )
 
@@ -326,14 +288,14 @@ with t2:
                     "Sales": ":,.2f",
                     "Orders": True
                 },
-                color_continuous_scale=["#eff6ff", "#bfdbfe", "#60a5fa", "#3b82f6", "#1d4ed8"],
+                color_continuous_scale=["#f3f4f6", "#d1d5db", "#9ca3af", "#6b7280", "#374151"],
             )
             fig_map.update_traces(marker_line_color="white", marker_line_width=1.1)
             fig_map.update_layout(
-                template="plotly_white",
+                template="plotly_dark",
                 height=600,
                 margin=dict(l=10, r=10, t=50, b=10),
-                title=dict(text="Route Lead-Time Intensity by State", x=0.5, xanchor="center", font=dict(size=22, color="#0f172a")),
+                title=dict(text="Route Lead-Time Intensity by State", x=0.5, xanchor="center", font=dict(size=22, color="white")),
                 annotations=[
                     dict(
                         text="Average lead days across states",
@@ -342,7 +304,7 @@ with t2:
                         xref="paper",
                         yref="paper",
                         showarrow=False,
-                        font=dict(size=13, color="#64748b")
+                        font=dict(size=13, color="#d1d5db")
                     )
                 ],
                 geo=dict(
@@ -350,9 +312,9 @@ with t2:
                     lakecolor="rgba(0,0,0,0)",
                     showlakes=True,
                     showland=True,
-                    landcolor="#f8fbff",
-                    subunitcolor="#cbd5e1",
-                    countrycolor="#cbd5e1"
+                    landcolor="#111827",
+                    subunitcolor="#9ca3af",
+                    countrycolor="#9ca3af"
                 )
             )
             st.plotly_chart(fig_map, use_container_width=True)
@@ -363,58 +325,51 @@ with t3:
         sun = filtered.dropna(subset=["Division", "Region"]).copy()
         if not sun.empty:
             st.plotly_chart(
-                px.sunburst(sun, path=["Division", "Region"], values="Sales", template="plotly_white"),
+                px.sunburst(sun, path=["Division", "Region"], values="Sales", template="plotly_dark"),
                 use_container_width=True
             )
 
     if "Product Name" in filtered.columns and "Sales" in filtered.columns:
         prod_sales = filtered.groupby("Product Name", as_index=False)["Sales"].sum().nlargest(10, "Sales")
         st.plotly_chart(
-            px.bar(prod_sales, x="Sales", y="Product Name", orientation="h", template="plotly_white", color_discrete_sequence=[ACCENT]),
+            px.bar(prod_sales, x="Sales", y="Product Name", orientation="h", template="plotly_dark", color_discrete_sequence=[ACCENT]),
             use_container_width=True
         )
 
 with t4:
     st.subheader("Ledger Trend")
+    if "Order Date" in filtered.columns and "Sales" in filtered.columns:
+        ledger_trend = filtered.groupby("Order Date", as_index=False).agg(
+            Sales=("Sales", "sum"),
+            Gross_Profit=("Gross Profit", "sum"),
+            Lead_Days=("Lead_Days", "mean")
+        )
 
-if "Order Date" in filtered.columns and "Sales" in filtered.columns:
-    ledger_trend = filtered.groupby("Order Date", as_index=False).agg(
-        Sales=("Sales", "sum"),
-        Gross_Profit=("Gross Profit", "sum"),
-        Lead_Days=("Lead_Days", "mean")
-    )
+        fig_ledger = go.Figure()
+        fig_ledger.add_trace(go.Scatter(
+            x=ledger_trend["Order Date"],
+            y=ledger_trend["Sales"],
+            mode="lines+markers",
+            name="Sales",
+            line=dict(color=ACCENT, width=3)
+        ))
+        fig_ledger.add_trace(go.Scatter(
+            x=ledger_trend["Order Date"],
+            y=ledger_trend["Gross_Profit"],
+            mode="lines+markers",
+            name="Profit",
+            line=dict(color=SECONDARY, width=3)
+        ))
+        fig_ledger.update_layout(
+            template="plotly_dark",
+            height=320,
+            margin=dict(l=10, r=10, t=20, b=10),
+            title=dict(text="Transaction Trend", x=0.5),
+            xaxis_title="Order Date",
+            yaxis_title="Amount",
+            legend_title_text="Ledger Metrics"
+        )
+        st.plotly_chart(fig_ledger, use_container_width=True)
 
-    fig_ledger = go.Figure()
-
-    fig_ledger.add_trace(go.Scatter(
-        x=ledger_trend["Order Date"],
-        y=ledger_trend["Sales"],
-        mode="lines+markers",
-        name="Sales",
-        line=dict(color="#2563eb", width=3)
-    ))
-
-    fig_ledger.add_trace(go.Scatter(
-        x=ledger_trend["Order Date"],
-        y=ledger_trend["Gross_Profit"],
-        mode="lines+markers",
-        name="Profit",
-        line=dict(color="#14b8a6", width=3)
-    ))
-
-    fig_ledger.update_layout(
-        template="plotly_white",
-        height=320,
-        margin=dict(l=10, r=10, t=20, b=10),
-        title=dict(text="Transaction Trend", x=0.5),
-        xaxis_title="Order Date",
-        yaxis_title="Amount",
-        legend_title_text="Ledger Metrics"
-    )
-
-    st.plotly_chart(fig_ledger, use_container_width=True)
-
-st.subheader("Transaction Audit Ledger")
-st.dataframe(filtered, use_container_width=True, hide_index=True)
-  
-    
+    st.subheader("Transaction Audit Ledger")
+    st.dataframe(filtered, use_container_width=True, hide_index=True)
