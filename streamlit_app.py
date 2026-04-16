@@ -203,6 +203,49 @@ if filtered.empty:
     st.warning("No records match the current filters.")
     st.stop()
 
+map_data = filtered.groupby(["State_Code", "State/Province"], as_index=False).agg(
+    Lead_Days=("Lead_Days", "mean"),
+    Sales=("Sales", "sum"),
+    Orders=("Order Date", "count")
+)
+map_data = map_data[map_data["State_Code"] != ""]
+
+fig_map = px.choropleth(
+    map_data,
+    locations="State_Code",
+    locationmode="USA-states",
+    color="Lead_Days",
+    scope="usa",
+    hover_name="State/Province",
+    hover_data={
+        "State_Code": False,
+        "Lead_Days": ":.1f",
+        "Sales": ":,.2f",
+        "Orders": True
+    },
+    color_continuous_scale=["#eff6ff", "#bfdbfe", "#60a5fa", "#3b82f6", "#1d4ed8"],
+)
+
+fig_map.add_scattergeo(
+    locations=map_data["State_Code"],
+    locationmode="USA-states",
+    text=map_data["State_Code"],
+    mode="text",
+    textfont=dict(size=10, color="#0f172a", family="Inter"),
+    showlegend=False
+)
+
+fig_map.update_layout(
+    template="plotly_white",
+    title=dict(text="Route Lead-Time Intensity by State", x=0.5),
+    geo=dict(
+        scope="usa",
+        showlakes=True,
+        lakecolor="rgb(255,255,255)",
+        bgcolor="rgba(0,0,0,0)"
+    )
+)
+
 k1, k2, k3, k4, k5, k6 = st.columns(6)
 
 sales_val = filtered["Sales"].sum(skipna=True) if "Sales" in filtered.columns else 0
