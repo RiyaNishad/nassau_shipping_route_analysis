@@ -22,16 +22,16 @@ st.markdown("""
     }
 
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #6b7280 0%, #4b5563 50%, #374151 100%) !important;
+        background: linear-gradient(180deg, #5f4f2a 0%, #7a682f 50%, #463b1e 100%) !important;
         border-right: 1px solid rgba(255,255,255,0.08);
     }
 
     [data-testid="stSidebar"] * {
-        color: #f9fafb !important;
+        color: #f8f1d8 !important;
     }
 
     [data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #9ca3af !important;
+        background-color: #c9b36a !important;
         color: #111827 !important;
         border: none !important;
     }
@@ -41,12 +41,12 @@ st.markdown("""
     }
 
     [data-baseweb="slider"] div[role="slider"] {
-        background-color: #d1d5db !important;
-        border-color: #d1d5db !important;
+        background-color: #c9b36a !important;
+        border-color: #c9b36a !important;
     }
 
     [data-baseweb="slider"] div[style*="background"] {
-        background: #d1d5db !important;
+        background: #c9b36a !important;
     }
 
     .metric-card {
@@ -73,8 +73,8 @@ st.markdown("""
     }
 
     .stTabs [aria-selected="true"] {
-        color: #d1d5db !important;
-        border-bottom-color: #d1d5db !important;
+        color: #cbd5e1 !important;
+        border-bottom-color: #cbd5e1 !important;
     }
 
     .stTabs [data-baseweb="tab"] {
@@ -109,7 +109,6 @@ def load_data():
     ]
 
     path = next((p for p in candidates if p.exists()), None)
-
     if path is None:
         st.error("CSV file not found in app folder, parent folder, or current working directory.")
         st.stop()
@@ -233,7 +232,7 @@ with k6:
     st.markdown(metric_html("Status", status_val), unsafe_allow_html=True)
 
 t1, t2, t3, t4 = st.tabs(["🚀 Strategy", "🗺️ Routes", "📦 Products", "📑 Ledger"])
-ACCENT = "#d1d5db"
+ACCENT = "#cbd5e1"
 SECONDARY = "#9ca3af"
 HIGHLIGHT = "#6b7280"
 
