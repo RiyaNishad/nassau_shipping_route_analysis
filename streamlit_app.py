@@ -377,3 +377,45 @@ with t3:
 with t4:
     st.subheader("Transaction Audit Ledger")
     st.dataframe(filtered, use_container_width=True, hide_index=True)
+
+st.subheader("Ledger Trend")
+
+if "Order Date" in filtered.columns and "Sales" in filtered.columns:
+    ledger_trend = filtered.groupby("Order Date", as_index=False).agg(
+        Sales=("Sales", "sum"),
+        Gross_Profit=("Gross Profit", "sum"),
+        Lead_Days=("Lead_Days", "mean")
+    )
+
+    fig_ledger = go.Figure()
+
+    fig_ledger.add_trace(go.Scatter(
+        x=ledger_trend["Order Date"],
+        y=ledger_trend["Sales"],
+        mode="lines+markers",
+        name="Sales",
+        line=dict(color="#2563eb", width=3)
+    ))
+
+    fig_ledger.add_trace(go.Scatter(
+        x=ledger_trend["Order Date"],
+        y=ledger_trend["Gross_Profit"],
+        mode="lines+markers",
+        name="Profit",
+        line=dict(color="#14b8a6", width=3)
+    ))
+
+    fig_ledger.update_layout(
+        template="plotly_white",
+        height=320,
+        margin=dict(l=10, r=10, t=20, b=10),
+        title=dict(text="Transaction Trend", x=0.5),
+        xaxis_title="Order Date",
+        yaxis_title="Amount",
+        legend_title_text="Ledger Metrics"
+    )
+
+    st.plotly_chart(fig_ledger, use_container_width=True)
+
+st.subheader("Transaction Audit Ledger")
+st.dataframe(filtered, use_container_width=True, hide_index=True)
