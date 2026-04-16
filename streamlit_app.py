@@ -18,7 +18,7 @@ st.markdown("""
     .main {
         background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 45%, #fdfdff 100%);
         font-family: 'Inter', sans-serif;
-        color: #1e293b;
+        color: #0f172a;
     }
 
     [data-testid="stSidebar"] {
@@ -31,7 +31,7 @@ st.markdown("""
     }
 
     [data-testid="stSidebar"] [data-baseweb="tag"] {
-        background-color: #60a5fa !important;
+        background-color: #2563eb !important;
         color: white !important;
         border: none !important;
     }
@@ -41,12 +41,12 @@ st.markdown("""
     }
 
     [data-baseweb="slider"] div[role="slider"] {
-        background-color: #3b82f6 !important;
-        border-color: #3b82f6 !important;
+        background-color: #2563eb !important;
+        border-color: #2563eb !important;
     }
 
     [data-baseweb="slider"] div[style*="background"] {
-        background: #3b82f6 !important;
+        background: #2563eb !important;
     }
 
     .metric-card {
@@ -81,11 +81,6 @@ st.markdown("""
         background: rgba(255,255,255,0.9);
         border-radius: 12px;
         padding: 10px 14px;
-    }
-
-    .block-container {
-        padding-top: 1rem;
-        padding-bottom: 2rem;
     }
 
     h1, h2, h3, h4 {
