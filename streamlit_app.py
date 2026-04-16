@@ -375,8 +375,6 @@ with t3:
         )
 
 with t4:
-    st.subheader("Transaction Audit Ledger")
-    st.dataframe(filtered, use_container_width=True, hide_index=True)
 
 st.subheader("Ledger Trend")
 
