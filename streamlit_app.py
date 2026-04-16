@@ -375,8 +375,7 @@ with t3:
         )
 
 with t4:
-
-st.subheader("Ledger Trend")
+    st.subheader("Ledger Trend")
 
 if "Order Date" in filtered.columns and "Sales" in filtered.columns:
     ledger_trend = filtered.groupby("Order Date", as_index=False).agg(
@@ -417,3 +416,5 @@ if "Order Date" in filtered.columns and "Sales" in filtered.columns:
 
 st.subheader("Transaction Audit Ledger")
 st.dataframe(filtered, use_container_width=True, hide_index=True)
+  
+    
